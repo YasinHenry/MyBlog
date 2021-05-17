@@ -56,7 +56,7 @@
 
 打开软件，下载安装`GitHubPlus`，配置上我们刚创建的仓库名、分支和Token，并设置图片在仓库的存储路径，以及自定义url
 
-![github+jsDelivr+PicGo+Typroa%20%E4%B8%80%E7%AB%99%E5%BC%8F%E8%A7%A3%E5%86%B3%20markdown%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2%E7%9A%84%E5%9B%BE%E7%89%87%208bc097ad50994074b9746649df519374/Untitled.png](github+jsDelivr+PicGo+Typroa%20%E4%B8%80%E7%AB%99%E5%BC%8F%E8%A7%A3%E5%86%B3%20markdown%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2%E7%9A%84%E5%9B%BE%E7%89%87%208bc097ad50994074b9746649df519374/Untitled.png)
+![Untitled](https://cdn.JsDelivr.net/gh/YasinHenry/MyBlog/imgs/2021/05/17/Untitled.png)
 
 自定义域名则配置成 `https://cdn.JsDelivr.net/gh/你的用户名/你的仓库名/` ，这里就方便你在相册中复制你图床的链接
 
@@ -70,4 +70,4 @@ typroa 设置
 
 typora官方文档
 
-![github+jsDelivr+PicGo+Typroa%20%E4%B8%80%E7%AB%99%E5%BC%8F%E8%A7%A3%E5%86%B3%20markdown%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2%E7%9A%84%E5%9B%BE%E7%89%87%208bc097ad50994074b9746649df519374/Untitled%201.png](github+jsDelivr+PicGo+Typroa%20%E4%B8%80%E7%AB%99%E5%BC%8F%E8%A7%A3%E5%86%B3%20markdown%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2%E7%9A%84%E5%9B%BE%E7%89%87%208bc097ad50994074b9746649df519374/Untitled%201.png)
+![Untitled 1](github+jsDelivr+PicGo+Typroa%20%E4%B8%80%E7%AB%99%E5%BC%8F%E8%A7%A3%E5%86%B3%20markdown%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2%E7%9A%84%E5%9B%BE%E7%89%87%208bc097ad50994074b9746649df519374.assets/Untitled%201-1621259532172.png)
