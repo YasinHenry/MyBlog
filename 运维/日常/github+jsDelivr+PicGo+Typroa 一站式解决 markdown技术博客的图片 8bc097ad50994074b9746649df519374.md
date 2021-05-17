@@ -70,4 +70,4 @@ typroa 设置
 
 typora官方文档
 
-![Untitled 1](github+jsDelivr+PicGo+Typroa%20%E4%B8%80%E7%AB%99%E5%BC%8F%E8%A7%A3%E5%86%B3%20markdown%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2%E7%9A%84%E5%9B%BE%E7%89%87%208bc097ad50994074b9746649df519374.assets/Untitled%201-1621259532172.png)
+![Untitled 1](https://cdn.JsDelivr.net/gh/YasinHenry/MyBlog/imgs/2021/05/17/Untitled 1.png)
