@@ -70,4 +70,4 @@ typroa 设置
 
 typora官方文档
 
-![Untitled 1](https://cdn.JsDelivr.net/gh/YasinHenry/MyBlog/imgs/2021/05/17/Untitled 1.png)
+![Untitled 1](https://cdn.JsDelivr.net/gh/YasinHenry/MyBlog/imgs/2021/05/17/20210517220401i.png)
