@@ -2,7 +2,7 @@
 
 > 本教程使用官方redis 镜像+docker-compose 完成整个redis集群的搭建，之所以使用docker-compose 是因为只需要写好配置文件部署执行方便
 
-
+> [项目位置](https://github.com/YasinHenry/DockerRedisCluster.git)
 
 [toc]
 
@@ -28,7 +28,9 @@
 > ​	redis-cluster.tmpl
 >
 > ​	docker-compose.yml
->
+
+
+
 > 好了，以上就是这次集群的目录结构，解释一下：
 >
 > 1. redis-cluster 目录不用说了是我们工作空间
