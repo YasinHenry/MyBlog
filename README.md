@@ -18,7 +18,7 @@
 - [x] [Windows10 激活](https://github.com/YasinHenry/MyBlog/blob/main/%E6%97%A5%E5%B8%B8/Windows10%20%E6%BF%80%E6%B4%BB.md)
 - [x] [备考](https://github.com/YasinHenry/MyBlog/blob/main/%E6%97%A5%E5%B8%B8/%E5%A4%87%E8%80%83.md)
 - [x] [计算机及应用(本科段)专业考试计划(2015版)](https://github.com/YasinHenry/MyBlog/blob/main/%E6%97%A5%E5%B8%B8/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%8F%8A%E5%BA%94%E7%94%A8(%E6%9C%AC%E7%A7%91%E6%AE%B5)%E4%B8%93%E4%B8%9A%E8%80%83%E8%AF%95%E8%AE%A1%E5%88%92(2015%E7%89%88).doc)
-
+- [ ] [买房笔记]()
 
 
 - ## 编程
@@ -54,6 +54,9 @@
     - #### AB交易系统教学
 - [x] [教学1：竞价教学.docx](https://github.com/YasinHenry/MyBlog/blob/main/%E7%90%86%E8%B4%A2/%E9%98%BF%E9%98%B3AB/AB%E4%BA%A4%E6%98%93%E7%B3%BB%E7%BB%9F%E6%95%99%E5%AD%A6/%E6%95%99%E5%AD%A61%EF%BC%9A%E7%AB%9E%E4%BB%B7%E6%95%99%E5%AD%A6.docx)
 - [x] [教学2：仓位控制.docx](https://github.com/YasinHenry/MyBlog/blob/main/%E7%90%86%E8%B4%A2/%E9%98%BF%E9%98%B3AB/AB%E4%BA%A4%E6%98%93%E7%B3%BB%E7%BB%9F%E6%95%99%E5%AD%A6/%E6%95%99%E5%AD%A62%EF%BC%9A%E4%BB%93%E4%BD%8D%E6%8E%A7%E5%88%B6.docx)
+- [ ] [卖点教学1.docx]()
+- [ ] [卖点教学2.docx]()
+
     - #### 战法文档
 - [x] [一阳指筹码选股.pdf](https://github.com/YasinHenry/MyBlog/blob/main/%E7%90%86%E8%B4%A2/%E9%98%BF%E9%98%B3AB/%E6%88%98%E6%B3%95%E6%96%87%E6%A1%A3/%E4%B8%80%E9%98%B3%E6%8C%87%E7%AD%B9%E7%A0%81%E9%80%89%E8%82%A1.pdf)
 - [x] [升龙术.pdf](https://github.com/YasinHenry/MyBlog/blob/main/%E7%90%86%E8%B4%A2/%E9%98%BF%E9%98%B3AB/%E6%88%98%E6%B3%95%E6%96%87%E6%A1%A3/%E5%8D%87%E9%BE%99%E6%9C%AF.pdf)
