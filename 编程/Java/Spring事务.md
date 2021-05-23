@@ -1,6 +1,8 @@
 # Spring事务
 
-- Spring 事务接口：
+[toc]
+
+## Spring 事务接口：
 
 > TransactionDefinition 
 
@@ -68,5 +70,32 @@
 | .PROPAGATION_MANDATORY    | 如果当前存在事务，则加入该事务；如果当前没有事务，则抛出异常。 |
 | PROPAGATION_NESTED        | 如果当前存在事务，则创建一个事务作为当前事务的嵌套事务来运行；如果当前没有事务，则该取值等价于TransactionDefinition.PROPAGATION_REQUIRED。 |
 
-Spring 默认回滚事务的异常是RuntimeException .class
 
+
+## 事务的只读属性
+
+> 事务的只读属性是指，对事务性资源只读操作或读写操作。
+>
+> 所谓事务性资源是指那些被事务管理的资源。eg: 数据源、JMS 资源，以及自定义的事务性资源等等。
+>
+> 如果确定只对事务性资源只读操作，那么我们可以把事务标记为只读，以提高事务处理的性能。在TransactionDefinition 中以boolean 类型标记该事务是否只读。
+
+## 事务的回滚规则
+
+> Spring 默认回滚事务的异常是RuntimeException .class
+>
+> > 通常情况下事务中抛出未检查异常（继承 RuntimeException的异常），则默认将回滚事务。如果没有抛出任何异常，或者抛出已检查异常，则仍然提交事务。这通常也是大多数开发者希望的处理方式。也是EJB中默认的处理方式。但是我们可以根据需要人为控制事务在抛出某些未检查异常时仍然提交事务，或者在抛出已检查异常时回滚事务。
+
+## Spring 事务管理API 分析
+
+> Spring 框架中，涉及到事务管理的 API 大约有100个左右，其中最重要的有三个：TransactionDefinition、PlatformTransactionManager、TransactionStatus。
+>
+> 所谓事务管理，其实就是“按照给定的事务规则来执行提交或者回滚操作”。
+>
+> > TransactionDefinition ：给定的事务规则;
+> >
+> > PlatformTransactionManager ：按照PlatformTransactionManager 来执行提交或者回滚操作； 
+> >
+> > TransactionStatus： 用于表示一个运行着的事务的状态。  
+
+#TODO
