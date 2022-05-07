@@ -1,0 +1,9 @@
+for i  in `find . -type l|xargs readlink -s`; do echo ${i##*/} ; done
+
+ for i  in `find . -type l|xargs readlink -s`; do rm -f ${i##*/} && ln -s `echo $i |sed 's#//#/Python-2.7.13/#g'` ${i##*/} ; done
+ 
+ 
+ for i in `ls virtu*` 
+do
+	sed -i "s/python2.7.8/Python-2.7.13/g" $i
+done

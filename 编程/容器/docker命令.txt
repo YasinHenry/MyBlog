@@ -1,0 +1,421 @@
+docker 常用命令：
+
+0、 ssh docker@Boot2DockerVM_IP	##进入到VM虚拟机Boot2Docker系统下，用户docker,密码tcuser 【windows Boot2Docker 虚拟机方式】
+1、 docker-machine ls ## 列出docker机器【windows Boot2Docker 虚拟机方式】,比如有default这台docker机器
+2、	docker-machine ssh default 这句命令加上序号1，是同上序号0的作用一样的。【windows Boot2Docker 虚拟机方式】
+tipe1、	上面三步也只是相当于进入到安装了docker的linux系统
+
+3、 sudo -i 在docker用户su到root用户【windows Boot2Docker 虚拟机方式,在设置一些变量时用到，比如配置国内的docker仓库】
+
+## 配置镜像加速器：
+
+首先去阿里云加速器、DaoCloud 加速器、灵雀云加速器 申请加速地址《如 https://jxus37ad.mirror.aliyuncs.com》
+4、	配置镜像加速器给docker引擎：
+
+	Ubuntu 14.04、Debian 7 Wheezy （对于使用 upstart 的系统而言）：
+	1、编辑 /etc/default/docker ，在DOCKER_OPTS 中添加 : --registry-mirror=<加速器地址>.如：DOCKER_OPTS="--registry-mirror=https://jxus37ad.mirror.aliyuncs.com" 2、再重启服务：sudo service docker restart 
+	
+	Ubuntu 16.04、Debian 8 Jessie、CentOS 7（对于使用 systemd 的系统）：
+	1、用 systemctl enable docker 启用服务
+	2、编辑 /etc/systemd/system/multi-user.target.wants/docker.service 文件
+		找到 ExecStart= 这一行，在这行最后添加加速器地址 --registry-mirror=<加速器地址>，如：ExecStart=/usr/bin/dockerd --registry-mirror=https://jxus37ad.mirror.aliyuncs.com
+		或者：sudo tee -a /etc/docker/daemon.json <<-EOF
+				{
+					"registry-mirrors": [
+						"加速地址"
+					],
+					"insecure-registries": []
+				}
+				EOF
+	3、重新加载配置并且重新启动。
+		$ sudo systemctl daemon-reload
+		$ sudo systemctl restart docker
+		
+	Windows 10：
+	对于使用 WINDOWS 10 的系统，在系统右下角托盘图标内右键菜单选择 Settings，打开配置窗口后左侧导航菜单选择 Docker Daemon。编辑窗口内的JSON串，填写如阿里云、DaoCloud之类的加速器地址，如：
+		{
+		  "registry-mirrors": [
+			"https://sr5arhkn.mirror.aliyuncs.com",
+			"http://14d216f4.m.daocloud.io"
+		  ],
+		  "insecure-registries": []
+		}
+		编辑完成，点击Apply保存后Docker服务会重新启动
+	
+	检查配置是否成功：
+	Linux系统下配置完加速器需要检查是否生效，在命令行执行 ps -ef | grep dockerd，如果从结果中看到了配置的 --registry-mirror 参数说明配置成功。
+	$ sudo ps -ef | grep dockerd
+	root      5346     1  0 19:03 ?        00:00:00 /usr/bin/dockerd --registry-mirror=https://jxus37ad.mirror.aliyuncs.com
+	$
+	
+	Windows10 以下版本:
+		docker-machine ssh default  ; # 登陆到虚拟机的docker机器上
+	sudo -i ;	# 切换到root的用户上
+	sudo sed -i "s|EXTRA_ARGS='|EXTRA_ARGS='--registry-mirror=加速地址 |g" /var/lib/boot2docker/profile; 
+	exit 
+	docker-machine restart default # 重启
+	
+获取镜像：
+命令：docker pull 。
+docker pull [选项] [Docker Registry地址]<仓库名>:<标签>
+
+列出镜像：
+docker images
+
+从镜像中创建一个容器并进入容器：
+docker run -it ubuntu  #ubuntu 是镜像名称
+	-i 交互式
+	-t 命令tty方式
+	-d 后台运行
+	--name 容器名字
+	--rm 运行从容器交互式命令行退出删除容器
+	
+悬挂镜像：
+在使用docker images是有时会出现既没有仓库名，也没有标签，均为<none> ---悬挂镜像。
+其实这个镜像是有镜像名和标签,原来为mongo:3.2 ，只是后来官方发布新版本后，从新docker pull mongo:3.2时，mongo:3.2这个名称被转移到新下载的镜像身上。出来docker pull 命令docker build也会导致这种情况。
+docker images -f dangling=true  此命令可以专门显示悬挂镜像。
+悬挂镜像已经失去价值可以随意删除：docker rmi $(docker images -q -f dangling=true)
+
+中间层镜像(被顶层镜像依赖，不应该删除。顶层镜像删除了中间层镜像自然消失了)：
+为了加速镜像构建、重复利用资源，docker 会利用中间层镜像。所以在一段时间后会出现一些一些依赖的中间层镜像。docker images 命令显示的只是顶层镜像。
+显示包括中间层镜像在内的命令：docker images -a
+
+过滤镜像：
+docker images ubuntu
+docker images ubuntu:3.2
+docker images -f since=ubuntu
+docker images -f before=ubuntu
+
+主机与docker容器映射端口：
+docker run --name webserver -d -p 90:80 nginx 
+	-p 是用于映射容器端口 # 90 主机端口 80 container端口
+
+对比容器相比镜像更改了什么：
+docker diff [container名称]	
+
+将container的更改保存为image
+docker commit [选项] <容器ID或容器名> [<仓库名>:[<标签>]]
+docker commit --author "author name" --message "修改了默认网页" webserver nginx:v2
+	--author 作者
+	--message 附加信息
+	webserver 要保存为镜像的container
+	
+查询镜像的修改历史记录：
+dicker history nginx #nginx 要查看的镜像名称或id
+
+tipe： 慎用docker commit命令，因为用命令docker diff webserver(container) 查看修改了什么时，我们知道我们只修改了一个文件，但是事实却是除了我们修改之外还有由于命令的执行被改的的文件，会导致新的image特别臃肿。
+用docker commit 制作的镜像成为黑箱镜像，应为除了制作者本人谁也不知道改了什么，过一段时间作者也会忘记。虽然docker diff 可以告诉你一些线索，但远远不能生成一致的镜像。docker commit 可以用于比如机器被入侵保留现场。万万不可用于定制镜像
+
+使用Dockerfile定制镜像：
+Dockerfile文件记录的每-条指令对应构建一层存储
+
+一个基于nginx镜像构建镜像：
+定制Dockerfile
+mkdir MyNginx && cd MyNginx
+vi Dockerfile
+	FROM nginx ##基于nginx镜像
+	RUN echo '<h1>hello,docker!!!!!!</h1>' > /usr/share/nginx/html/index.html.index  ##运行命令
+
+FROM 指令是必须指令，并且用于Dockerfile文件的第一行
+Docker还存在一个特殊镜像，名为scratch,这个镜像是虚拟的概念，并不实际存在，表示空白的镜像。如果其他镜像无法满足你需要的基础镜像你可以用FROM scratch 为基础定制
+以scratch 为基础的镜像更小巧更适合golang使用
+
+RUN 命令是执行命令的命令，其格式有两种：
+	shell 格式：RUN <命令>
+	exec 格式：RUN ["可执行文件","参数1","参数2"]
+
+tipe: 由于Dockerfile 没执行一个命令会建立一层，所以如果命令能写成一条劲量一条来RUN。这样不仅减少了构建部署的时间，也不容易出错（Union FS 是有最大层数限制的）
+
+Dockerfile 中鼓励是有 \ 作为命令换行方式，以及行首 # 进行注释。
+
+tipe：重要的一点是 在一组命令的最后添加清理工作，删除为了编译构建所需要的软件，所下载的、展开的文件、apt缓存文件。因为每一层的东西并不会在下一层删除，会一直跟着image
+
+Dockerfile定制完成了，开始构建镜像：
+docker build -t nginx:v3 .  
+# . 是指定上下文路径，一切都基于这个路径（Dockerfile除外），没有指定Dockerfile文件时，默认去上下文的路径下找。包括要是上传到镜像中的东西也要放到上下文中，build时会把上下文中的数据打包发送到服务端Docker引擎构建image。
+
+docker build 还支持从URL构建：
+docker build https://github.com/twang2218/gitlab-ce-zh.git\#:8.14
+此命令构建目录为 /8.14/
+
+用给定的tar压缩包构建：
+docker build http://server/context.tar.gz
+如果给的URL不是git repo，而是个tar包，Docke会下载解压并以其作为上下文构建
+
+从标准输出中读取Dockerfile构建：
+docker build - < Dockerfile  或者 cat Dockerfile | docker build -
+如果Dockerfile是文本这种没有上下文，不能像其他方法将本地文件COPY进镜像；如果是Dockerfile压缩包,会解压并以其为上下文
+
+Dockerfile中的命令：（除了FROM RUN EXEC）
+COPY:
+	两种格式：
+		shell方式：COPY <源路径>...<目标路径>
+		exec方式： COPY ["<源路径1>",..."<目标路径>"]
+	原路径 可以有多个，也可以是符合GO的filepath.Match规则的通配符。
+	目标路径 可以是容器内的绝对路径，也可以是相对工作目录的相对路径（工作目录可以用WORKDIR指令来指定），
+	COPY命令会让原路径的文件文件夹的权限一同拷贝
+
+ADD更高级的复制文件：
+	和COPY性质和格式基本一致。
+	在COPY指令上增加了功能：源文件可以是一个URL,由URL下载下来的文件权限设置为600，如果源文件是压缩包，会自动解压。
+	ADD会使镜像构建缓存失效，使构建速度缓慢。
+	tiep：不建议使用ADD.仅在需要解压缩是使用。
+
+CMD 两种格式：
+	shell 方式：CMD <命令>
+	exec 方式（推荐使用）：CMD ["可执行文件","参数1","参数2"...]
+		CMD用于指定默认容器主进程的启动命令。在运行是可以指定新的命令来代替镜像设置中的默认命令
+		eg:docker run -it ubuntu #会直接进入bash
+		eg：docker run -it ubuntu  cat /etc/os-release #替换默认的/bin/bash 命令输出文件内容啦
+
+tipe：容器中的进程没有后台执行之说，只有前台。
+
+ENTRYPOINT:入口点：：
+	shell 方式：
+	exec 方式（推荐使用）：
+		ENTRYPOINT 和 CMD一样，都是在指定容器启动及参数。
+		ENTRYPOINT 在运行时也可替换，需要通过docker run 的参数 --entryport来指定。
+		当指定ENTYYPORT 后，CMD的含义发生变化，不再直接运行其命令，而是建CMD的内容作为参数传给 ENTYRPORT 的指令：<ENTRYPORT> "<CMD>"。
+	场景:
+		1、让镜像变成像命令一样使用。
+			Dockerfile:
+				FROM ubuntu:16.04
+				RUN apt-get update \
+					&& apt-get install -y curl \
+					&& rm -rf /var/lib/apt/lists/*
+				CMD ["curl","-s","http://ip.cn"]
+			构建：docker build -t myip
+			运行：docker run myip # 会打印出响应的内容：当前ip:.......
+			我们如果想显示请求头信息呢？
+			这样运行？：docker run  myip -i #不对，我们说过了，放在命令后的参数哦会作为命令替换CMD的默认命令。那么CMD就无法是参数灵活使用。
+			ENTRYPOINT 可以！
+			Dockerfile:
+				FROM ubuntu:16.04
+				RUN apt-get update \
+					&& apt-get install -y curl \
+					&& rm -rf /var/lib/apt/lists/*
+				ENTRYPOINT ["curl","-s","http://ip.cn"]
+			构建：docker build -t myip
+			我们可以直接当做命令运行：
+				docker run myip #显示响应内容
+			我想知道请求头信息：docker run myip -i #此处的 i 就替换了原始命令中的 s
+		2、应用运行前的准备工作：
+			
+ENV 设置环境变量：
+		两种格式：
+		ENV <key> <value>
+		ENV <key1>=<value1> <key2>=<value2>...
+		tiep:有空格的值可以用""包裹
+	
+ARG 构建参数：
+		ARG <参数名>[=<默认值>]
+		和 ENV 的效果是一样，都是设置环境变量。不同事 ARG 所设置的构建环境变量将来容器运行时是不会存在这些环境变量的。但不要因此就是用ARG 保存密码之类信息，应为docker history 还是可以看到的。
+		ARG 是定义参数名称，及默认值，该默认值可以在构建命令docker build 中用 --build-arg <参数名>=<值>来覆盖。
+	
+VOLUME 定义匿名卷：
+	格式:
+		VOLUME ["<路径1>","<路径2>"...]
+		VOLUME <路径>
+		为防止运行时用户忘记将动态文件所保存目录挂载为卷，在Dockerfile中，我们可以事先指定某些目录挂载为匿名卷。
+		VOLUME /data 这里的/data 目录就会在运行自动挂载为匿名卷，任何向/data 中写信息都不会记录进容器存储存，从而保证容器存储存的无状态话。
+		运行时可以覆盖这个挂载设置：docker run -d -v mydata:/data xxxx  这就是用了mydata这个命名卷挂载到了 /data 这个位置。
+		
+EXPOSE 暴露端口：
+	格式：
+		EXPOSE <端口1>[<端口2>...]
+	tipe：1、这只是一个声明，使是用者理解镜像服务的守护端口，方便配置映射
+		2、在运行时是用随机端口映射时：docker run -P，会自动随机映射EXPOST的端口
+		3、在早前还有特殊用途：早前所有容器运行于默认桥接网络中存在所有容器之间可以相互直接访问安全隐患，于是有了Docker 引擎参数 --icc=false使容器间默认无法访问
+			除非使用了--links参数的容器才可以互通，并且只有镜像中EXPOST所声明的端口才可以被访问。--icc=false 在引用docker network后基本不用了。通过自定义网络可以轻松实现容器间的互联和隔离。
+		4、要将EXPOSE 和 运行时使用 -p <宿主端口>:<容器端口> 区分开来。-p是映射主机和容器端口。EXPOSE 仅仅是声明容器打算使用什么端口，并不会自动在宿主机和容器间进行端口映射。
+		
+WORKDIR 指定工作目录：
+	格式：
+		WORKDIR <工作目录路径>
+		使用WORKDIR 指令可以指定工作目录或者称为当前目录，如果该目录不存在会帮你创建
+	tiep:关于把Dockerfile作为Shell来执行在此在此声明：
+		如：RUN cd /app
+			RUN echo "hello" > world.txt
+		用上面这个dockerfile构建镜像会发现当WORKDIR不是/app 时 /app/world.txt 文件找不到。原因之前说过，在Dockerfile中两个RUN命令的执行环境根本不同，而是两个完全不同的容器。这就是在Dockerfile构建分层存储导致，之前说过，每一个RUN都是启动一个容器、执行命令、然后提交存储层。
+		因此如果需要改变以后各层的工作目录的位置，那么应该使用WORKDIR执行
+			WORKDIR /app
+			RUN echo "hello" > world.txt
+
+USER 用于指定当前用户：
+	格式：
+		USER <用户名>
+	USER 和 WORKDIR相似,都是改变环境状态并影响以后的层.
+	不过这个用户名是事先创建好的.
+	希望以某个已建立好的用户来运行某个服务进程,不要使用su或者sudo,这些都需要比较麻烦的配置，而且在TTy缺失的环境下经常出错。建议使用gosu
+	《见P91》
+	
+HEALTHCHECK 健康检查：
+	格式：
+		HEALTHCHECK [选项] CMD <命令>:设置检查容器健康状态的命令
+		HEALTHCHECK NONE :如果基础镜像用健康检查指令，此命令可以屏蔽。
+		HEALTHCHECK 支持选项：
+				--interval=<间隔>：两次健康检查的间隔，默认30秒
+				--timeout=<时长> ：健康检查命令运行超时时间，默认30秒。
+				--retries=<次数>：当前连续失败指定次数后，则容器状态视为unhealthy，默认3次
+		如果此命令写了多个，最后一个有效《P93》
+		
+ONBUILD 为他人作嫁衣		
+	ONBUILD <其它指令>
+	在ONBUILD后的命令在执行当前镜像是不会执行，而是在以此镜像为基础的镜像才会执行。
+	
+
+其他制作镜像的方式：
+	1、从rootfs压缩包导入：
+		格式: docker import [选项] <文件> | <URL> |- [<仓库名>[:<标签>]]
+	压缩包可以使本地文件、远程文件，甚至从标准输入中得到。压缩包将会在镜像目录展开，并直接作为镜像的第一层提交。
+	eg:docker import http://download.openvz.org/template/precreated/ubuntu-14.04-x86_64-minimal.tar.gz \
+			openvz/ubuntu:14.04
+	
+	2、docker load 和 docker save 命令：
+		用于加载和保存为tar镜像。在没有docker Registry 的情况下。
+		保存镜像为归档文件：
+			docker save apline | gzip > apline-latest.tar.gzip
+		加载镜像：
+			docker load -i aplin-latest.tar.gz
+		一个命令完成从一个机器将镜像迁移到另一个机器：
+			docker save <镜像名> | bzip2 | pv |ssh <用户名>@<主机名> 'cat | docker load'
+			
+删除本地镜像：
+	docker rmi [选项] <镜像1> [<镜像2>...]
+	tiep: docker rm 是删除容器
+	
+tiep: 对于CentOs/RHEL 的用户需要注意：这类系统没有UnionFS[aufs、overlay2] 使用，一般使用devicemapper 驱动利用LVM的机制模拟分层存储。
+			这样会使性能和稳定性大打折扣，而且配置相对复杂。默认devicemapper 为了简化配置，其devicemapper是跑在一个稀疏文件模拟的块设备上，也被称为loop-lvm(这样不需要格外配置就可以运行).
+			loop-lvm 的做法是稳定性和性能大打折扣，无论日志还是docker info 中都会看到警告信息，而且/var/lib/docker/devicemapper/devicemapper/data 由于是稀疏文件，导致不段增长无法控制，甚至很多人为解决这个问题删除镜像，空间释放后基本不进行垃圾回收，也是见效甚微，不见文件减小。
+			对如何配置块设备给devicemapper驱动做存储层的做法官方有提供，这类做法也被称为配置direct-lvm。
+			或许有人注意到CentOs7中存在被backports 回来的overlay驱动，不过CentOs里的这个驱动到不到生产环境使用稳定程度，所以不推荐使用。
+			
+
+启动容器：
+	基于镜像新建并启动；
+		主要命令：docker run
+		eg1：输出"Hello World"之后终止容器：
+			sudo docker run ubuntu:14.04 /bin/echo 'Hello World'
+		eg2:启动一个终端，允许用户进行交互：
+			sudo docker run -it unbuntu:14.04 /bin/bash 
+			-t 选项让Docker 分配一个伪终端并绑定到容器的标准输入上，
+			-i让容器标准输入保持打开。
+			-d 守护态运行（后台运行）需要回去守护态的输出可以用docker logs命令查看
+			
+	将终止状态的容器重新启动：
+		主要命令docker start
+		docker restart 将一个容器终止后启动。
+		
+	终止容器：
+		主要命了：docker stop
+		此外当Docke 容器中指定的应用（主进程）终结是，容器自动终止。
+		终止的容器可以用docker ps -a来查看
+		
+	进入容器：
+		在使用-d参数时，容器启动后会进入后台运行。如果需要进入容器进行操作有很多方法，包括使用docker attach 命令或者nsenter 工具等。
+		attach 命令：	
+			docker attach <镜像>
+			缺点：当多个窗口attach到同一个容器时所有窗口会同步显示，当一个窗口阻塞是，其他窗口也不能用。退出是不可以用Ctrl+c 或者 exit 会使容器进入stop状态。要用
+        exec 命令：
+			docker exec <容器名/ID> /bin/sh
+		nsenter 命令：
+			想用需要安装
+			
+导出和导入容器：
+	导出容器：
+		docker export <容器id/容器名> > ubuntu.tar # 导出容器快照到本地文件
+	导入容器快照：
+		docker import
+		eg:cat ununtu.tar | sudo docker import - test/unbuntu:v1.0
+	用户可以使用docker load 来导入镜像存储文件到本地镜像库，也可以docker import 导入一个容器快照到本地镜像库。区别在于容器快照文件将丢弃所以历史记录和元数据信息（既仅保存容器当时的快照状态），但可以重新制定标签等元数据信息
+	而镜像存储文件将保存完整记录，体积也要大。
+	
+删除容器：
+	docker rm 删除一个处于终止状态的容器。
+	如果删除处于运行中的容器可以添加 -f 参数。
+	docker rm $(docker ps -a -q) 可以全部删除处于stop状态的容器
+	
+docker search ## 搜索镜像
+docker pull  ## 将镜像拉取到本地
+docker push ## 将镜像推送到Docker Hub
+
+Docker Hub 中的镜像：
+	docker search <image name> #搜索镜像时镜像名（NAME）有两种，一种是单个单词 如：centos;另一种如：tianon/centos。
+		第一种是基础镜像也被称为根镜像；是有Docker公司创建、验证、支持、提供。这样的镜像往往使用单个单词作为名字。
+		第二种是有Docker用户创建并维护，往往带有用户名为前缀，可以通过前缀 user_name/ 来指定使用某个用户提供的镜像。
+
+自动创建：
+	有时候用户创建了镜像，安装了某个软件，如果软件发布新版本则需要手动更新镜像，麻烦！。
+	而自动创建允许用户通过 DockerHub 指定跟踪一个目标网站（目前支持 GitHub 或 BitBucket）上的项目，一旦项目发生新的提交，则自动执行创建。
+	配置自动创建：
+		创建并登陆 Docker Hub 以及目标网站；
+		在目标网站中连接账户到 Docker Hub；
+		在 Docker Hub 中 配置一个自动创建；
+		选取一个目标网站中的项目（需要韩Dockerfile） 和分支；
+		指定 Dockerfile 的位置，并提交创建。
+		之后可以在 Docker Hub 的自动创建页面中的跟踪每次创建的状态。
+
+私有仓库：
+	docker-registry 是官方提供的工具，用于构建私有的镜像仓库。
+	安装：
+		容器运行：
+			前提：安装了Docker 后，可以通过获取官方registry 镜像来运行。
+			$ docker run -d -p 5000:5000 registry
+			用户也可以指定参数来配置私有仓库位置，例如配置镜像存储到Amazon S3服务。
+			$ docker run \
+					-e SERRINGS_FLAVOR=s3 \
+					-e AWS_BUCKET=acme-docker \
+					-e STORAGE_PATH=/registry \
+					-e AWS_KEY=AKIAHSHB43HS3J92MXZ \
+					-e AWS_SECRET=xdDowwlK7TJajV1Y7EoOZrmuPEJlHYcNP2k4j49T \
+					-e SEARCH_BACKEND=sqlalchemy \
+					-p 5000:5000 \
+					registry
+			此外还可以指定本地路径（如 /home/user/registry-conf）下的配置文件。
+		    $ docker run -d -p 5000:5000 -v /home/user/registry-conf:/registry-conf -e DOCKER_REGISTRY_CONFIG=/registry-conf/config.yml registry
+			默认情况下，仓库会被创建在容器 /var/lib/registry(v1 中是/tmp/registry)下。可以通过 -v 参数来讲镜像文件存放在本地指定路径。
+			$ docker run -d -p 5000:5000 -v /opt/data/registry:/var/lib/registry registry
+		
+		本地安装：
+			Ubuntu：
+				sudo apt-get install -y build-essential python-dev libevent-dev python-pip liblzma-dev
+				sudo pip install docker-registry
+			ContOs:
+				sudo yum install -y gcc xz-devel python-devel libevent-devel python-pip
+				sudo python-pip install docker-registry
+			也可以源码安装(不累述)
+			配置：	
+				主要修改dev 模板段的storage-path 到本地的存储仓库路径。
+				cp config/config_sample.yml config/config.yml ## 示例配置文件内容
+				之后启动Web服务：
+					sudo gunicorn --access-logfile - --error-logfile - -k gevent -b 0.0.0.0:5000 -w 4 --max-requests 100 docker_registry.wsgi:application
+		
+		
+		
+			
+		
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+
+	
+	
