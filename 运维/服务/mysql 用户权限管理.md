@@ -24,7 +24,9 @@
 
 - 查看权限分配 
 
-\>`show grants;>show grants for 'ctms'@'%';`
+\>`show grants;`
+
+`>show grants for 'ctms'@'%';`
 
 - 刷新权限
 

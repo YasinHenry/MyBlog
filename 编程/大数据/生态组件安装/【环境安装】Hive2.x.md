@@ -134,6 +134,16 @@ scp -r /usr/local/src/apache-hive-2.3.3-bin root@slave1:/usr/local/src/apache-hi
 scp -r /usr/local/src/apache-hive-2.3.3-bin root@slave1:/usr/local/src/apache-hive-2.3.3-bin
 ```
 
+7.1 补充一点：
+
+> mysql 和 hive 配置完成之后记得初始化hive 元数据
+>
+> `schematool -initSchema -dbType mysql `
+
+7.2 启动hive
+
+> hive --service metastore &
+
 **8. 启动HiveServer（WebUI）**
 
 `hiveserver2 &`
@@ -141,3 +151,5 @@ scp -r /usr/local/src/apache-hive-2.3.3-bin root@slave1:/usr/local/src/apache-hi
 **9. 启动Hive服务**
 
 `hive`
+
+![image-20220114224130223](【环境安装】Hive2.x.assets/image-20220114224130223.png)

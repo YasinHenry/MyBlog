@@ -6,7 +6,7 @@
 
 ## 配置本地yum源，网络源
 ### 备份默认yum源
-```
+```bash
 \> tar -cf ~/yun.repos.d.tar yum.repos.d
 \> rm -f /etc/yum.repos.d/*
 ```
@@ -15,7 +15,9 @@
 >
 > > 详见：阿里云官方教程：[http://mirrors.aliyun.com](http://mirrors.aliyun.com/)
 > >
-> > 			163官方教程：[http://mirrors.163.com/.help/centos.html](http://mirrors.163.com/.help/centos.html)
+> > ```properties
+> > 		163官方教程：[http://mirrors.163.com/.help/centos.html](http://mirrors.163.com/.help/centos.html)
+> > ```
 >
 > 阿里
 >
@@ -40,7 +42,7 @@
 > > ```wget -O /etc/yum.repos.d/CentOS7-Base-163.repo http://mirrors.163.com/.help/CentOS7-Base-163.repo```
 
 ### 重载yum信息缓存
-```
+```bash
 \> yum clean all
 \> yum repolist
 \> yum makecache
@@ -50,7 +52,7 @@
 
 ### 上传镜像文件到本地目录
 
-```
+```bash
 #只要开启了sshd即可使用sftp登录上传文件
 \> sftp user@192.168.2.2
 \> put CentOS-7-x86_64-Everything-1503-01.iso
@@ -58,7 +60,7 @@
 
 ### 创建镜像文件挂载目录，挂载镜像
 
-```
+```bash
 \> mkdir /media/CentOS7
 \> mount -t iso9660 -o loop /usr/local/src/CentOS-7-x86_64-Everything-1503-01.iso /media/CentOS7
 # 配置开机自动挂载,下次开机备用
@@ -73,7 +75,7 @@
 > 	\\> mount -n -o remount,rw /
 
 ### 编辑文件/etc/yum.repos.d/centos7-media.repo
-```
+```properties
 \> vi /etc/yum.repos.d/centos7-media.repo
 [centos7-media]
 name=centos7
@@ -126,10 +128,9 @@ yum-plugin-fastestmirror-1.1.30-37.el6.noarch
 
 ## 自定义YUM源
 > 查看安装createrepo (建仓工具)
-> ```\> yum -qa|grep createrepo```
+> ```\> rpm -qa|grep createrepo```
 > 没有安装需要安装：
 > ``` \> yum -y install createrepo```
->
 
 
 ## 局域网YUM源
