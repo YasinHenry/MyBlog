@@ -39,10 +39,9 @@
 
 - [x] [github+jsDelivr+PicGo+Typroa 一站式解决 markdown技术博客的图片](https://github.com/YasinHenry/MyBlog/blob/main/%E8%BF%90%E7%BB%B4/%E6%97%A5%E5%B8%B8/github%2BjsDelivr%2BPicGo%2BTyproa%20%E4%B8%80%E7%AB%99%E5%BC%8F%E8%A7%A3%E5%86%B3%20markdown%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2%E7%9A%84%E5%9B%BE%E7%89%87%208bc097ad50994074b9746649df519374.md)
 - [x] [windows10 虚拟机创建nat网络](https://github.com/YasinHenry/MyBlog/blob/main/%E8%BF%90%E7%BB%B4/%E6%97%A5%E5%B8%B8/windows10%20%E8%99%9A%E6%8B%9F%E6%9C%BA%E5%88%9B%E5%BB%BAnat%E7%BD%91%E7%BB%9C.md)
-    
+  
   - ### 服务
   
-
 - [x] [docker redis 集群搭建](https://github.com/YasinHenry/MyBlog/blob/main/%E8%BF%90%E7%BB%B4/%E6%9C%8D%E5%8A%A1/docker%20redis%20%E9%9B%86%E7%BE%A4%E6%90%AD%E5%BB%BA.md)
 - [x] [mysql 用户权限管理](https://github.com/YasinHenry/MyBlog/blob/main/%E8%BF%90%E7%BB%B4/%E6%9C%8D%E5%8A%A1/mysql%20%E7%94%A8%E6%88%B7%E6%9D%83%E9%99%90%E7%AE%A1%E7%90%86.md)
 - [x] [ngrok 内网穿透（私有服务）](https://github.com/YasinHenry/MyBlog/blob/main/%E8%BF%90%E7%BB%B4/%E6%9C%8D%E5%8A%A1/ngrok%20%E5%86%85%E7%BD%91%E7%A9%BF%E9%80%8F%EF%BC%88%E7%A7%81%E6%9C%89%E6%9C%8D%E5%8A%A1%EF%BC%89.md)
