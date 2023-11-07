@@ -1,18 +1,22 @@
-git 命令：
+# git 命令：
 
+[TOC]
 
-安装后，本机配置机器唯一标示：
+## 配置
+
+### 用户标示：
+
 ```$ git config --global user.name "Your Name"```
 `$ git config --global user.email "email@example.com"`
 
+## 本地版本库：
 
-创建本地版本库：
 选择位置：
 `$ mkdir learngit`
 `$ cd learngit`
 `$ pwd`
 `/Users/michael/learngit`
-创建版本库：
+初始化版本库：
 `$ git init`
 
 
@@ -22,7 +26,6 @@ git 命令：
 
 把缓存去的文件提交到仓库 -m 加批语：
 `$ git commit -m "wrote a readme file"`
-
 
 修改刚才提交的内容或者说明：
 `$ git commit --amend  --> 编辑提交说明，内容为当前缓存区的内容，如果没有后续提交内容还是和上次一样`
@@ -35,39 +38,48 @@ git 命令：
 查看版本库目录下的状态：
 `$ git status`
 
-
 查看readme.txt修改了什么内容：
 `$ git diff readme.txt` 
+
 把修改的提交到缓存区：
 `$ git add readme.txt`
+
 把缓存区文件提交到仓库
 `$ git commit -m "add distributed"`
 
-
 查看历史记录：
 `$ git log`
+
 上面命令打印太多，简化一下：
 `$ git log --pretty=oneline`
 
+查看是否有需要push到git服务器上的代码
 
-退回版本到上一个版本：
-`$ git reset --hard HEAD^`
-当然，下面命令是回到上上个版本：
-`$ git reset --hard HEAD^^ 依次类推`
+`$ git log origin/master..HEAD`
+
+退回版本到上一个版本：(--hard 删除回退版本的修改内容，--soft 回退版本的内容会回到工作空间)
+`$  git reset --hard HEAD~1`
+
+`$  git reset --soft HEAD^^`
+
+> ^^ 的多少代表往前回退几个版本（windows中 ^ 被认为是换号符操作时需要多加一个^，推荐使用HEAD~1）
+>
+> ~ 后的数字代表往前回退的版本数
+
 此时再看版本历史，发现最新的已经看不到了：
-`$ git log`
+`$ git log <branch>`
+
 要回到回退之前的版本怎么办，只要此时命令窗口没有关闭：
 往上翻找此命令窗口的记录可以找到回退的版本id：
 `$ git reset --hard 3628164  #就回来了`
 如果关掉了怎么办：
-用来记录每一条命令：
-`$ git reflog`
+用来记录每一条命令(包括被删除的commit 和 reset ; 当删除或者回退导致的误操作可以使用此命令找到锚点版本号找回来。)：date=iso显示日期
+`$ git reflog  <branch> --date=iso` 
 找到我们提交时的那个版本就可以了
 
 
 查看工作区与版本库中最新内容的区别：
 `$ git diff HEAD -- readme.txt`
-
 
 丢弃工作区的修改:
 `$ git checkout -- readme.txt`
@@ -80,14 +92,11 @@ git checkout -- file命令中的--很重要，没有--，就变成了“切换�
 
 git reset HEAD file可以把暂存区的修改撤销掉（unstage），重新放回工作区：
 
-
 `$ git reset HEAD readme.txt`
-
 
 场景1：当你改乱了工作区某个文件的内容，想直接丢弃工作区的修改时，用命令git checkout -- file。
 场景2：当你不但改乱了工作区某个文件的内容，还添加到了暂存区时，想丢弃修改，分两步，第一步用命令git reset HEAD file，就回到了场景1，第二步按场景1操作。
 场景3：已经提交了不合适的修改到版本库时，想要撤销本次提交，参考git reset --hard HEAD^，不过前提是没有推送到远程库。
-
 
 删除文件:
 从版本库：
@@ -99,11 +108,39 @@ git status命令会立刻告诉你哪些文件被删除了：
 选择2rm错了：
 `$ git checkout -- test.txt`
 
+取消文件追踪：
 
-远程仓库：
+```bash
+$ git rm --cached [file_name] # 取消文件追踪，不删除本地文件
+$ git rm --f [file_name] # 取消文件追踪，并删除本地文件
+```
+
+
+
+```
+$ git checkout -- . # 撤销工作空间修改，回到最近一次git commit或git add时的状态
+$ git reset version # 回退到 version 代码不会退到工作空间，默认（--mixed）
+$ git reset --hard version\HEAD^\HEAD^^ # 回退到指定版本或以当前HEAD为基准网上回退几个提交版本， 代码不会退到工作空间
+$ git reset --soft version\HEAD~1\HEAD^^  # 回退到指定版本或以当前HEAD为基准网上回退几个提交版本， 代码会退到工作空间
+```
+
+```
+# 当使用git reset 回退到了已经push到远程仓库的版本号时，再次push服务器会拒绝你的推送，遇到这种情况只能~强制推送覆盖远程分支~: -f=--force
+git push -f origin
+```
+
+
+
+
+
+
+
+## 远程仓库：
+
+### 生成密钥
+
 `$ ssh-keygen -t rsa -C "youremail@example.com"`
-`ssh-keygen -t rsa -C "yasinwang@126.com"`
-
+`$ ssh-keygen -t rsa -C "yasinwang@126.com"`
 
 远程仓库的连接是用ssh协议：
 在本地创建公钥和私钥：
@@ -117,16 +154,18 @@ git status命令会立刻告诉你哪些文件被删除了：
 `$ git push -u origin master #关联后第一次推送`
 `$ git push origin master # 之后再推送`
 
-
 关联远程库：
 `$ git remote add origin git@example:user/projectname`
 origin 为在本地取得远程库的名字（origin 与 git@example:user/projectname如键值对关系 ）
 
-
 重新设置远程仓库地址
 `$ git remote set-url origin git@other:user/projectname`
 
+当更改远程仓库地址或新增并从新增的远程仓库地址pull 操作时报"[fatal: refusing to merge unrelated histories]()" 这通常是因为你更换了远程仓库地址后，新的远程仓库中包含了本地仓库中不存在的提交。 解决办法
 
+```
+git pull origin main --allow-unrelated-histories
+```
 
 
 查看远程库：
@@ -148,15 +187,19 @@ git fetch pb  # 要抓取远端仓库pb所有的分支到本地但不合并，�
 远程仓库的删除：
 `$ git remote rm origin`
 
-
 查看某个远程仓库的详细信息
 `$ git remote show origin`
 如果是在 master 分支，就可以用 git pull 命令抓取数据合并到本地
 
+设置追踪远程分支（本地分支关联远程分支）
+
+`$ git branch --set-upstream-to=origin/<branch> local_branch`
+
+
+
 
 推送数据到远程仓库
 `$ git push origin master`
-
 
 分枝：
 创建分之dev , -b 代表创建并切换
@@ -167,26 +210,60 @@ Switched to a new branch 'dev'
 查看当前分之：
 `$ git branch`
 
+查看分支详情
+`$ git branch -v`
+
+查看所有分支（包括远程）
+`$ git branch -a`
+
+查看所有分支（可以看到本地分支追踪的远程分支）
+`$ git branch -vv`
+
 
 创建分支：
 `$ git branch <name>`
 
-
 重命名分支：
 `$ git branch -m oldbranchname newbranchname`
+
+重命名远程分支：
+
+`$ git push origin :old-branch new-branch`
 
 
 切换到master分枝：
 `$ git checkout master`
 
-
 在master分支上时，把dev合并到master 分支上去：
-`$ git merge dev  # git merge命令用于合并指定分支到当前分支`
+`$ git merge --not-ff dev  # git merge命令用于合并指定分支到当前分支,--not-ff 代表使master的提交记录不会被打乱`
+
+合并远程分支
+
+- step 1: 获取并检出此合并请求的分支
+
+  `git fetch origin`
+
+  `git checkout -b develop origin/develop`
+
+- step 2: 本地审查变更
+
+- step 3: 合并分支并修复出现的任何冲突
+
+  `git fetch origin`
+
+  `git checkout origin/master`
+
+  `git meger --no-ff develop`
+
+- step 4: 推送合并的结果到GitLab, 因为上面git checkout origin/master 非本地分支，是远程分支的一个快照，我们这这个快照中合并分支后推送到gitlag 服务端需要是 “HEAD:master” 这样分支名前加“HEAD:branch”
+
+  `git push origin HEAD:master` 
+
+
 
 
 删除分支：
 `git branch -d <name>`
-
 
 删除远程分支：
 `git push origin :branch_you_want_to_delete  # origin 远程仓库名，branch_you_want_to_delete 删除的分支名`
@@ -255,10 +332,161 @@ git show v1.4 # 查看标签的详细信息
 
 
 强制用远程分支覆盖本地分支：
-`git fetch --all ## 把远程分支同步下来`
+`git fetch --all ## 把远程分支同步下来, git fetch与git pull 区别是不与本地分支merge`
 `git reset --hard origin/master ## 强制用下载下来的master分支覆盖本地现在分支`
 
 
 
 本地对比远程分支：
 `git diff origin/dev`
+
+
+
+reset checkout -- restore区别
+
+```
+git reset 操作会将 HEAD 指向的分支指针移动到指定的提交，同时撤销之前的 commit。它还可以用来修改暂存区中的文件,多用于~批量回退版本到某个版本提交的位置，此位置之后的提交将被回退~。
+
+git restore 操作用于恢复工作区或暂存区中被修改的文件到指定的提交状态。它可以用于撤销文件的更改，但不影响 Git 仓库中的提交历史。
+
+git checkout -- . 操作将当前目录下所有被修改的文件恢复到最近一次 commit 的版本。它类似于 git restore ，但是只能恢复整个目录和暂存区中的文件，而不是一个单独的文件。
+
+git revert 用于撤销~指定提交~的更改（只针对当前提交的内容回退），并且创建一个新的提交来记录这个撤销操作。与 git reset 不同，git revert 不会修改分支的历史记录，而是添加了一个新的提交来表示撤销的更改。因此，git revert 可以安全地应用于已经在共享存储中的提交。需要注意的是，如果要回滚多个提交，通常最好使用 git reset 命令
+```
+
+一键删除未追踪的文件
+
+```
+git clean -n  会列举出要删除的文件
+git clean -f  会删除未追踪的文件
+git clean -n -d 要查看将要被删除的未追踪文件和目录列表
+git clean -f -d 实际删除这些未追踪的文件和目录
+```
+
+代码分支合并
+
+```
+git checkout develop
+git merge origin/develop-1 #把develop-1 分支代码合并到develop上
+git merge origin/develop-1 --allow-unrelated-histories #git 默认是不允许两个没有共同相关历史提交的两个分支的代码合并在一起的，但是非要合并到一起可以使用参数--allow-unrelated-histories 但是需要注意可能会导致冲突和数据丢失
+git merge 参数还有如下：
+--no-commit：在自动合并时不进行提交。这样可以查看合并后的代码，并在确认无误后手动提交。
+--ff-only：只使用快进合并。如果当前分支没有任何新的提交，那么合并操作将自动执行快进合并。否则，将会出现 "not a fast-forward" 错误。
+--no-ff:和--ff-only 相反，非快速合并。
+--squash：执行 squash 合并。这意味着 Git 会将两个分支中的所有更改都压缩到一个新的提交中，而不是创建一个新的合并提交，一版情况主分支合并到开发分支为了保持。Squash 合并是一种将多个提交压缩成单个提交的方法，没有显示的合并历史记录。这使得开发分支能够保持干净整洁，而不会包括合并的历史记录。相反，如果您想要将开发分支的更改合并到主分支中，则可能需要保留合并历史记录。因为这有助于跟踪和理解代码库的演变过程。通常情况下，推荐在开发分支上使用 Squash 合并来保持干净整洁的分支历史记录，在主分支上使用普通的合并策略来保留合并历史记录。但具体还要根据您的项目需求和团队协作方式来决定。
+--strategy=<strategy>：指定合并策略。常用的策略包括 recursive（递归合并）、resolve（解决合并）和 octopus（章鱼合并）等。
+--abort：取消尚未完成的合并操作。
+-m <parent-number>：当合并有多个父节点时，指定要使用的父节点号码。通常情况下，Git 可以自动检测父节点，但有时需要手动设置
+```
+
+只合并develop-1 的某一次提交到develop 中如何实现
+
+```
+1、在develop-1当前分支确定要合并的提交id
+git log --pretty=oneline
+2、切换会develop 中
+git checkout develop
+3、把此次提交Id的内容合并到develop
+git cherry-pick <commit_id>
+4、解决冲突推送
+```
+
+标签
+
+```
+#查看当前分支： 
+$ git tag
+#添加本地标签：
+$ git tag -a 版本号
+#删除本地标签: 
+$ git tag -d 版本号
+#推送某标签至远程：
+$ git push origin 版本号
+#推送全部标签至远程：
+$ git push origin –tags 提交所有tag至远程，使用git push origin 不会提交本地标签
+# 删除远程标签： 
+$ git push origin :refs/tags/版本号
+```
+
+### 轻量标签
+
+轻量标签（lightweight tag）仅仅是一个指向特定提交的引用，它不会存储任何额外的信息。创建轻量标签的命令如下：
+
+```shell
+git tag {标签名} {提交ID}
+```
+
+例如，创建一个指向最新提交的轻量标签：
+
+```shell
+git tag v1.0.0
+```
+
+### 附注标签
+
+附注标签（annotated tag）是存储在Git数据库中的一个完整对象，它有一个标签名，标签信息，标签签名等信息。创建附注标签的命令如下：
+
+```shell
+git tag -a {标签名} -m "{标签信息}" {提交ID}
+```
+
+例如，创建一个指向最新提交的附注标签：
+
+```shell
+git tag -a v1.0.0 -m "Release version 1.0.0" HEAD
+```
+
+### 查看标签
+
+查看当前项目中的所有标签，可以使用以下命令：
+
+```shell
+git tag
+```
+
+如果想查看某个具体标签的信息，可以使用以下命令：
+
+```shell
+git show {标签名}
+```
+
+### 推送标签
+
+默认情况下，`git push`命令不会将标签推送到远程服务器，需要使用以下命令将标签推送到远程服务器：
+
+```shell
+git push origin {标签名}
+```
+
+如果要一次性推送所有本地标签，可以使用以下命令：
+
+```shell
+git push origin --tags
+```
+
+### 删除标签
+
+删除本地标签的命令如下：
+
+```shell
+git tag -d {标签名}
+```
+
+删除远程标签的命令如下：
+
+```shell
+git push origin :refs/tags/{标签名}
+```
+
+### 分支描述
+
+为分支添加描述，便于分支太多无法分别
+
+```
+git config branch.<branch>.description "分支描述"
+```
+
+查看分支描述
+```shell
+git config branch.<branch>.description
+```
