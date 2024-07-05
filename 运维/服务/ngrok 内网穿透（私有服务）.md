@@ -11,19 +11,19 @@
 
 1. 登录腾讯云领取/购买服务器后硬是没找到我的服务器实例在哪里，主要是没有选对服务器实例所在城市，看下图带数字的城市。下图标识以下：系统是CentOS 7 的。
 
-![image-20210303165257147](https://cdn.JsDelivr.net/gh/YasinHenry/MyBlog/imgs/ngrok%20%E5%86%85%E7%BD%91%E7%A9%BF%E9%80%8F%EF%BC%88%E7%A7%81%E6%9C%89%E6%9C%8D%E5%8A%A1%EF%BC%89.assets/2021/05/18/14-53-35-59cd0d76b99bcac6f53bfb1daaf72775-image-20210303165257147-5cbc1c.png)
-
+![image-20210303165257147](./ngrok 内网穿透（私有服务）.assets/image-20210303165257147.png)
 
 ## 搞个免费的域名
+
 > 之前有用过花生壳域名内网穿透时免费送的一个域名，登录花生壳发现需要实名实名不了不能使用了。
 > 网上搜了搜，发现了更好的 [freenom](https://my.freenom.com/clientarea.php) 里面有很多免费的和实惠的域名可以使用。
 进入网址找了好多地方硬是没找到注册入口，非人性啊！下面贴图标识以下：
 
-![image-20210303170700512](https://cdn.JsDelivr.net/gh/YasinHenry/MyBlog/imgs/ngrok%20%E5%86%85%E7%BD%91%E7%A9%BF%E9%80%8F%EF%BC%88%E7%A7%81%E6%9C%89%E6%9C%8D%E5%8A%A1%EF%BC%89.assets/2021/05/18/14-53-55-f5fc6ed68976d6c02280f2840ab99b8b-image-20210303170700512-5dcc3a.png)
+![image-20210303170700512](./ngrok 内网穿透（私有服务）.assets/image-20210303170700512.png)
 
 向下滑到底部：
 
-![image-20210303170756419](https://cdn.JsDelivr.net/gh/YasinHenry/MyBlog/imgs/ngrok%20%E5%86%85%E7%BD%91%E7%A9%BF%E9%80%8F%EF%BC%88%E7%A7%81%E6%9C%89%E6%9C%8D%E5%8A%A1%EF%BC%89.assets/2021/05/18/14-54-14-69e104b25133ab971507d40bd7f7dae2-image-20210303170756419-8d5c7b.png)
+![image-20210303170756419](./ngrok 内网穿透（私有服务）.assets/image-20210303170756419.png)
 
 
 > ==tip:== 
@@ -37,25 +37,26 @@
 
 
 ## 搞个免费的DNS解析
+
 正好发现腾讯云有免费的DNS解析可以薅羊毛：
 
-![image-20210304091715697](https://cdn.JsDelivr.net/gh/YasinHenry/MyBlog/imgs/ngrok%20%E5%86%85%E7%BD%91%E7%A9%BF%E9%80%8F%EF%BC%88%E7%A7%81%E6%9C%89%E6%9C%8D%E5%8A%A1%EF%BC%89.assets/2021/05/18/14-56-24-1342f26312015d468f5f2e4f68d6fb6f-image-20210304091715697-841a24.png)
+![image-20210304091715697](./ngrok 内网穿透（私有服务）.assets/image-20210304091715697.png)
 
 点进添加的域名后可以添加记录：
 
-![image-20210304091955196](https://cdn.JsDelivr.net/gh/YasinHenry/MyBlog/imgs/ngrok%20%E5%86%85%E7%BD%91%E7%A9%BF%E9%80%8F%EF%BC%88%E7%A7%81%E6%9C%89%E6%9C%8D%E5%8A%A1%EF%BC%89.assets/2021/05/18/14-56-34-21fd4f72536d6937a23ef3733a080764-image-20210304091955196-ab815d.png)
+![image-20210304091955196](./ngrok 内网穿透（私有服务）.assets/image-20210304091955196.png)
 
 记录以下第一条和第二条中的记录值：我的是 litchi.dnspod.net 、cyclamen.dnspod.net 先后顺序不要搞错，接下来要用到。
 
 回到我们申请域名的freenom网站：
 
-![image-20210304103137965](https://cdn.JsDelivr.net/gh/YasinHenry/MyBlog/imgs/ngrok%20%E5%86%85%E7%BD%91%E7%A9%BF%E9%80%8F%EF%BC%88%E7%A7%81%E6%9C%89%E6%9C%8D%E5%8A%A1%EF%BC%89.assets/2021/05/18/14-56-48-1c5f0c4fd544d6c332b999f3e064d57a-image-20210304103137965-6401a8.png)![image-20210304103212703](https://cdn.JsDelivr.net/gh/YasinHenry/MyBlog/imgs/ngrok%20%E5%86%85%E7%BD%91%E7%A9%BF%E9%80%8F%EF%BC%88%E7%A7%81%E6%9C%89%E6%9C%8D%E5%8A%A1%EF%BC%89.assets/2021/05/18/14-57-40-5f0cdb1ac29e43983553ad736c85c7df-image-20210304103212703-564c5a.png)
+![image-20210304103137965](./ngrok 内网穿透（私有服务）.assets/image-20210304103137965.png)![image-20210304103212703](./ngrok 内网穿透（私有服务）.assets/image-20210304103212703.png)
 
-![image-20210304103252336](https://cdn.JsDelivr.net/gh/YasinHenry/MyBlog/imgs/ngrok%20%E5%86%85%E7%BD%91%E7%A9%BF%E9%80%8F%EF%BC%88%E7%A7%81%E6%9C%89%E6%9C%8D%E5%8A%A1%EF%BC%89.assets/2021/05/18/14-57-47-665ece6227c9feb695bdcfc3d296f115-image-20210304103252336-ec6d3e.png)![image-20210304103332066](https://cdn.JsDelivr.net/gh/YasinHenry/MyBlog/imgs/ngrok%20%E5%86%85%E7%BD%91%E7%A9%BF%E9%80%8F%EF%BC%88%E7%A7%81%E6%9C%89%E6%9C%8D%E5%8A%A1%EF%BC%89.assets/2021/05/18/14-57-53-badbcbfe84f2b8b3179b074f8473d825-image-20210304103332066-6f20e6.png)
+![image-20210304103252336](./ngrok 内网穿透（私有服务）.assets/image-20210304103252336.png)![image-20210304103332066](./ngrok 内网穿透（私有服务）.assets/image-20210304103332066.png)
 
 你以为到这里薅羊毛就结束了么？太天真了，我们还可以搞个ssl证书，有用没用先撸了再说：
 
-![image-20210304092941606](https://cdn.JsDelivr.net/gh/YasinHenry/MyBlog/imgs/ngrok%20%E5%86%85%E7%BD%91%E7%A9%BF%E9%80%8F%EF%BC%88%E7%A7%81%E6%9C%89%E6%9C%8D%E5%8A%A1%EF%BC%89.assets/2021/05/18/14-58-22-0ec736a2f91e8f7fbd924c5b570b6851-image-20210304092941606-23c9ad.png)![image-20210304093239066](https://cdn.JsDelivr.net/gh/YasinHenry/MyBlog/imgs/ngrok%20%E5%86%85%E7%BD%91%E7%A9%BF%E9%80%8F%EF%BC%88%E7%A7%81%E6%9C%89%E6%9C%8D%E5%8A%A1%EF%BC%89.assets/2021/05/18/14-58-27-e179e4ae4326e91de7bc80ca4ab3f3a0-image-20210304093239066-7f7590.png)
+![image-20210304092941606](./ngrok 内网穿透（私有服务）.assets/image-20210304092941606.png)![image-20210304093239066](./ngrok 内网穿透（私有服务）.assets/image-20210304093239066.png)
 
 （暗自高兴，却不知危机在慢慢靠近！）
 
