@@ -352,6 +352,15 @@ git restore 操作用于恢复工作区或暂存区中被修改的文件到指�
 git checkout -- . 操作将当前目录下所有被修改的文件恢复到最近一次 commit 的版本。它类似于 git restore ，但是只能恢复整个目录和暂存区中的文件，而不是一个单独的文件。
 
 git revert 用于撤销~指定提交~的更改（只针对当前提交的内容回退），并且创建一个新的提交来记录这个撤销操作。与 git reset 不同，git revert 不会修改分支的历史记录，而是添加了一个新的提交来表示撤销的更改。因此，git revert 可以安全地应用于已经在共享存储中的提交。需要注意的是，如果要回滚多个提交，通常最好使用 git reset 命令;由于是此命令不会修改分支的历史记录而是添加一个新的提交，当revert一个merge一个分支操作时,当下次再次merge此分支会导致代码冲突和此前revert的合并内容不会合并进来。针对merger操作可以考虑使用reset操作，或者stash保存当前需要撤销的合并之后合并再应用。
+
+git restore <file>：撤销对工作副本中指定文件的更改。
+git restore --staged <file>：撤销对暂存区的更改，即将已暂存的文件恢复到未暂存的状态。
+
+对文件、目录：工作副本和缓存区（git restore 是git checkout -- 的优化版，因为它提供了更清晰的命令行选项和行为）
+git checkout – 和 git restore 通常用于撤销对工作副本或暂存区的更改，而不改变提交历史。
+对版本，级别可以是commit后的恢复，reset是恢复到某次版本号。revert是针对当前版本号回退。
+git reset 可以用于撤销提交历史，但使用时要小心，因为它可能会改变历史记录。
+git revert 用于在不改变现有历史的前提下，撤销之前的提交更改。
 ```
 
 一键删除未追踪的文件
@@ -490,3 +499,104 @@ git config branch.<branch>.description "分支描述"
 ```shell
 git config branch.<branch>.description
 ```
+
+
+
+## git-lfs大文件存储
+
+> tip:
+>
+> 1. 在安装git时不要选中git自带的git-lfs ，后续下载git lfs 程序安装
+> 2. 在将大文件添加进缓存区（git add 操作）之前要使用git lfs对文件追踪（eg: git-lfs track "*.text*"）
+> 3. 在工程目录下安装lfs（git lfs install ）
+
+### git-lfs 执行流程
+
+> 注意顺序，部分步骤可以少，但顺序不可乱
+
+1. 初始化git工程(如果是clone 的项目则无需此部)
+
+   `git init`
+
+2. 安装lfs
+
+   `git lfs install ` or `git lfs install --skip-smudge`
+
+   相反操作`git lfs uninstall`
+
+3. lfs 追踪大文件(eg：whl后缀文件)
+
+   > 执行下面命令会生成**.gitattributes** 里面就是配置追踪文件的规则
+
+   `git lfs track "*.whl"`
+
+4. 将**.gitattributes**添加到缓存区提交推送
+
+   ```
+   git add .gitattributes
+   git commit -m "LFS track files"
+   git push origin develop
+   ```
+
+5. 追踪的大文件添加缓存区
+
+   `git add xxx.whl`
+
+6. 提交推送git服务器
+
+   ```
+   git commit -m "LFS commit"
+   git push origin develop
+   ```
+
+> 1. 在第3步之后可以验证lfs track 配置是否成功
+>
+>    `git lfs track`
+>
+> 2. 不想使用lfs追踪管理了
+>
+>    `git lfs untrack "*.whl"`
+>
+> 3. 在第5步之后可以验证当前添加进缓存区的大文件有没有被git-lfs追踪（之前因为安装git时选中git自带的git-lfs在这里碰到过坑）
+>
+>    `git lfs ls-files`
+>
+> 4. 使用命令查询lfs状态
+>
+>    `git lfs status`
+
+7. 平常拉去代码使用命令`git pull` 只会拉去lfs追踪的大文件的指纹，要拉取真正的文件需要使用`git lfs pull` fetch 同样适用。
+8. 如果在git lfs track "*.whl*" 之前缓存区已经存在了.whl 大文件，管理历史存在的，可以使用以下命令
+
+```
+git lfs migrate import --include-ref=master --include="biger.zip"
+```
+
+> --include-ref 选项指定导入的分支
+>
+> 如果向应用到所有分支，则使用--everything选项
+>
+> --include 选项指定要导入的文件。可以使用通配符，批量导入。
+
+
+
+9. 上述操作会改写提交历史，如果不想改写历史，则使用 `--no-rewrite`选项，并提供新的commit信息：
+
+   ```
+   git lfs migrate import --no-rewrite -m "lfs import"
+   ```
+
+   
+
+10. 如果一个仓库中包含LFS内容，但是在推送时不想推送这类文件，只要加上 `--no-verify`选项
+
+```
+git push --no-verify
+```
+
+
+
+
+
+
+
